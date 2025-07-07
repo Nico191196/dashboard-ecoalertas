@@ -1,0 +1,20 @@
+/src/app/
+├── core/
+│   ├── models/
+│   │   └── report.model.ts
+│   ├── services/
+│   │   ├── report.service.ts
+│   │   └── socket.service.ts
+├── dashboard/
+│   ├── components/
+│   │   ├── chart-container/
+│   │   │   ├── chart-container.component.ts
+│   │   │   └── chart-container.component.html
+│   │   └── map-container/
+│   │       ├── map-container.component.ts
+│   │       └── map-container.component.html
+│   ├── dashboard.component.ts
+│   ├── dashboard.component.html
+│   └── dashboard.component.scss
+├── app.module.ts
+└── environments/environment.ts
