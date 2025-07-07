@@ -1,43 +1,94 @@
 <div [class.dark]="darkMode">
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
+
+  <!-- Header -->
   <header class="bg-white dark:bg-gray-800 shadow-sm border-b p-4 flex justify-between items-center">
-    <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">EcoAlertas</h1>
-    <button (click)="toggleDarkMode()" class="p-2">
-      <!-- Use icons like Sun/Moon -->
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ 'DASHBOARD.TITLE' | translate }}</h1>
+    <button (click)="toggleDarkMode()" mat-icon-button>
       {{ darkMode ? '☀️' : '🌙' }}
     </button>
   </header>
 
+  <!-- Filters -->
   <nav class="p-4 bg-white dark:bg-gray-700">
     <div class="flex flex-wrap gap-4 items-center">
-      <input [(ngModel)]="searchTerm" (input)="applyFilters()" placeholder="Search..." class="border rounded px-2 py-1" />
-      <input type="date" [(ngModel)]="dateRange[0]" (change)="applyFilters()" />
-      -
-      <input type="date" [(ngModel)]="dateRange[1]" (change)="applyFilters()" />
+      <!-- Search Input -->
+      <mat-form-field appearance="outline">
+        <input matInput [(ngModel)]="searchTerm" (input)="applyFilters()" placeholder="{{ 'SEARCH' | translate }}" />
+      </mat-form-field>
 
-      <select multiple [(ngModel)]="filterCategory" (change)="applyFilters()">
-        <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
-      </select>
+      <!-- Date Range Picker -->
+      <mat-form-field appearance="outline">
+        <input matInput [matDatepicker]="dpStart" placeholder="Start Date" [(ngModel)]="dateRange[0]" (dateChange)="applyFilters()">
+        <mat-datepicker-toggle matSuffix [for]="dpStart"></mat-datepicker-toggle>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <input matInput [matDatepicker]="dpEnd" placeholder="End Date" [(ngModel)]="dateRange[1]" (dateChange)="applyFilters()">
+        <mat-datepicker-toggle matSuffix [for]="dpEnd"></mat-datepicker-toggle>
+      </mat-form-field>
 
-      <select multiple [(ngModel)]="filterStatus" (change)="applyFilters()">
-        <option *ngFor="let stat of statuses" [value]="stat">{{ stat }}</option>
-      </select>
+      <!-- Category Filter -->
+      <mat-form-field appearance="fill">
+        <mat-select [(value)]="filterCategory" multiple (selectionChange)="applyFilters()" placeholder="{{ 'CATEGORY' | translate }}">
+          <mat-option *ngFor="let cat of categories" [value]="cat">{{ cat }}</mat-option>
+        </mat-select>
+      </mat-form-field>
 
-      <button (click)="exportCSV()" class="px-3 py-1 bg-blue-600 text-white rounded">Export CSV</button>
+      <!-- Status Filter -->
+      <mat-form-field appearance="fill">
+        <mat-select [(value)]="filterStatus" multiple (selectionChange)="applyFilters()" placeholder="{{ 'STATUS' | translate }}">
+          <mat-option *ngFor="let stat of statuses" [value]="stat">{{ stat }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Export CSV Button -->
+      <button (click)="exportCSV()" mat-raised-button color="primary">
+        {{ 'EXPORT_CSV' | translate }}
+      </button>
+
+      <!-- Language Switcher -->
+      <mat-form-field appearance="fill">
+        <mat-select [(value)]="selectedLang" (selectionChange)="translate.use($event.value)">
+          <mat-option value="en">English</mat-option>
+          <mat-option value="es">Español</mat-option>
+        </mat-select>
+      </mat-form-field>
     </div>
   </nav>
 
+  <!-- Main Content -->
   <main class="p-4 grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <div *ngIf="isLoading" class="col-span-full">
-      Loading...
+    <!-- Loading / Error Messages -->
+    <div *ngIf="isLoading" class="col-span-full text-center py-6">
+      {{ 'LOADING' | translate }}...
     </div>
-    <div *ngIf="isError" class="col-span-full text-red-600">
-      Error fetching data
+    <div *ngIf="isError" class="col-span-full text-red-600 text-center py-6">
+      {{ 'ERROR_FETCHING_DATA' | translate }}
     </div>
 
-    <table *ngIf="!isLoading && filteredReports.length" class="min-w-full">
+    <!-- Charts -->
+    <app-chart-container
+      *ngIf="!isLoading"
+      [barData]="barData"
+      [pieData]="pieData"
+      [lineData]="lineData">
+    </app-chart-container>
+
+    <!-- Map -->
+    <app-map-container
+      *ngIf="!isLoading"
+      [reports]="filteredReports">
+    </app-map-container>
+
+    <!-- Reports Table -->
+    <table *ngIf="!isLoading && filteredReports.length" class="min-w-full table-auto col-span-full">
       <thead>
-        <tr>
-          <th>ID</th><th>Category</th><th>Status</th><th>Date</th>
+        <tr class="bg-gray-100 dark:bg-gray-600">
+          <th>ID</th>
+          <th>{{ 'CATEGORY' | translate }}</th>
+          <th>{{ 'STATUS' | translate }}</th>
+          <th>{{ 'DATE' | translate }}</th>
         </tr>
       </thead>
       <tbody>
@@ -49,5 +100,13 @@
         </tr>
       </tbody>
     </table>
+
+    <!-- Pagination -->
+    <mat-paginator
+      *ngIf="!isLoading && filteredReports.length"
+      [length]="filteredReports.length"
+      [pageSizeOptions]="[5, 10, 20]"
+      showFirstLastButtons>
+    </mat-paginator>
   </main>
 </div>
