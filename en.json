@@ -1,0 +1,14 @@
+{
+  "DASHBOARD": {
+    "TITLE": "EcoAlertas",
+    "NEW_REPORT_RECEIVED": "New Report Received"
+  },
+  "SEARCH": "Search...",
+  "EXPORT_CSV": "Export CSV",
+  "LOADING": "Loading",
+  "ERROR_FETCHING_DATA": "Error fetching data",
+  "CATEGORY": "Category",
+  "STATUS": "Status",
+  "DATE": "Date",
+  "ALERT": "Alert"
+}
