@@ -1,0 +1,53 @@
+<div [class.dark]="darkMode">
+  <header class="bg-white dark:bg-gray-800 shadow-sm border-b p-4 flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">EcoAlertas</h1>
+    <button (click)="toggleDarkMode()" class="p-2">
+      <!-- Use icons like Sun/Moon -->
+      {{ darkMode ? '☀️' : '🌙' }}
+    </button>
+  </header>
+
+  <nav class="p-4 bg-white dark:bg-gray-700">
+    <div class="flex flex-wrap gap-4 items-center">
+      <input [(ngModel)]="searchTerm" (input)="applyFilters()" placeholder="Search..." class="border rounded px-2 py-1" />
+      <input type="date" [(ngModel)]="dateRange[0]" (change)="applyFilters()" />
+      -
+      <input type="date" [(ngModel)]="dateRange[1]" (change)="applyFilters()" />
+
+      <select multiple [(ngModel)]="filterCategory" (change)="applyFilters()">
+        <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+      </select>
+
+      <select multiple [(ngModel)]="filterStatus" (change)="applyFilters()">
+        <option *ngFor="let stat of statuses" [value]="stat">{{ stat }}</option>
+      </select>
+
+      <button (click)="exportCSV()" class="px-3 py-1 bg-blue-600 text-white rounded">Export CSV</button>
+    </div>
+  </nav>
+
+  <main class="p-4 grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div *ngIf="isLoading" class="col-span-full">
+      Loading...
+    </div>
+    <div *ngIf="isError" class="col-span-full text-red-600">
+      Error fetching data
+    </div>
+
+    <table *ngIf="!isLoading && filteredReports.length" class="min-w-full">
+      <thead>
+        <tr>
+          <th>ID</th><th>Category</th><th>Status</th><th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of filteredReports">
+          <td>{{ r.id }}</td>
+          <td>{{ r.category }}</td>
+          <td>{{ r.status }}</td>
+          <td>{{ r.date | date:'medium' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+</div>
