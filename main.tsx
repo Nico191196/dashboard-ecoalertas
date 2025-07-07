@@ -7,7 +7,7 @@ import { useTable, usePagination } from 'react-table';
 import { io, Socket } from 'socket.io-client';
 import { MapPin, Calendar, Eye, CheckCircle, Clock, AlertTriangle, Filter, Search, Download, RefreshCw, Sun, Moon } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
-import { saveAs } from 'file-saver';
+import * as FileSaver from 'file-saver';
 import i18n from 'i18next';
 import { initReactI18next, useTranslation } from 'react-i18next';
 
@@ -99,7 +99,7 @@ export default function EcoAlertasDashboard() {
     const rows = filteredReports.map(r => [r.id, r.category, r.status, r.date].join(','));
     const csv = [header, ...rows].join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    saveAs(blob, 'reportes.csv');
+    FileSaver.saveAs(blob, 'reportes.csv');
   }, [columns, filteredReports]);
 
   if (isLoading) return <div className="p-6">{t('Loading...')}</div>;
@@ -128,7 +128,6 @@ export default function EcoAlertasDashboard() {
 
       <main className="p-4 grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* KPIs */}
-        {/* ... similar a antes, usando filteredReports y reports.length */}
 
         {/* Gráficos y mapa (lazy-loaded) */}
         <Suspense fallback={<div>{t('Loading charts...')}</div>}>
